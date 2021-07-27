@@ -24,7 +24,6 @@ input.
 \dontrun{
 qq(stats::runif(1e6))
 }
-
 }
 \keyword{qq}
 \keyword{qqplot}
