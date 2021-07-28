@@ -64,29 +64,34 @@ library(fastqq)
 set.seed(42)
 p_simulated <- runif(10000)
 fastqq::qq(p_simulated)
+
+# Alternative
+fastqq::qq_drop_dense(p_simulated)
 ```
 
 We can compare the timings of creating the plots, with `qqman`.
 
 ```{r timing_fastqq}
+set.seed(555)
 N_test <- c(1e3,1e4,1e5,1e6)
-time_method <- function(pkg_name){
+time_method <- function(pkg_name, method){
   suppressPackageStartupMessages(library(pkg_name, 
                                          character.only=TRUE, quietly = TRUE))
   for(N in N_test){
     p_vec <- runif(n = N)
-    print(paste0("Timing ", pkg_name, "::qq with ", 
+    print(paste0("Timing ", pkg_name, "::", method," with ", 
                  N, " points"))
     tictoc::tic()
     pdf(file = NULL) # Just to prevent the plot from appearing in the readme...
-    do.call("qq", list(pvector=p_vec))
+    do.call(method, list(pvector=p_vec))
     dev.off()
     tictoc::toc()  
   }
 }
 
-time_method('fastqq')
-time_method('qqman')
+time_method('fastqq','qq')
+time_method('fastqq','qq_drop_dense')
+time_method('qqman','qq')
 ```
 
 So we can expect around 8-10X speedup.

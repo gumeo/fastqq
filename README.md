@@ -61,43 +61,65 @@ fastqq::qq(p_simulated)
 
 <img src="man/figures/README-example-1.png" width="100%" />
 
+``` r
+# Alternative
+fastqq::qq_drop_dense(p_simulated)
+#> [1] "Pruned down to 7388 points for qq plot"
+```
+
+<img src="man/figures/README-example-2.png" width="100%" />
+
 We can compare the timings of creating the plots, with `qqman`.
 
 ``` r
+set.seed(555)
 N_test <- c(1e3,1e4,1e5,1e6)
-time_method <- function(pkg_name){
+time_method <- function(pkg_name, method){
   suppressPackageStartupMessages(library(pkg_name, 
                                          character.only=TRUE, quietly = TRUE))
   for(N in N_test){
     p_vec <- runif(n = N)
-    print(paste0("Timing ", pkg_name, "::qq with ", 
+    print(paste0("Timing ", pkg_name, "::", method," with ", 
                  N, " points"))
     tictoc::tic()
     pdf(file = NULL) # Just to prevent the plot from appearing in the readme...
-    do.call("qq", list(pvector=p_vec))
+    do.call(method, list(pvector=p_vec))
     dev.off()
     tictoc::toc()  
   }
 }
 
-time_method('fastqq')
+time_method('fastqq','qq')
 #> [1] "Timing fastqq::qq with 1000 points"
-#> 0.038 sec elapsed
+#> 0.036 sec elapsed
 #> [1] "Timing fastqq::qq with 10000 points"
-#> 0.02 sec elapsed
+#> 0.021 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+05 points"
-#> 0.048 sec elapsed
+#> 0.047 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+06 points"
-#> 0.411 sec elapsed
-time_method('qqman')
+#> 0.408 sec elapsed
+time_method('fastqq','qq_drop_dense')
+#> [1] "Timing fastqq::qq_drop_dense with 1000 points"
+#> [1] "Pruned down to 1000 points for qq plot"
+#> 0.003 sec elapsed
+#> [1] "Timing fastqq::qq_drop_dense with 10000 points"
+#> [1] "Pruned down to 6607 points for qq plot"
+#> 0.018 sec elapsed
+#> [1] "Timing fastqq::qq_drop_dense with 1e+05 points"
+#> [1] "Pruned down to 11427 points for qq plot"
+#> 0.048 sec elapsed
+#> [1] "Timing fastqq::qq_drop_dense with 1e+06 points"
+#> [1] "Pruned down to 14251 points for qq plot"
+#> 0.39 sec elapsed
+time_method('qqman','qq')
 #> [1] "Timing qqman::qq with 1000 points"
 #> 0.003 sec elapsed
 #> [1] "Timing qqman::qq with 10000 points"
 #> 0.025 sec elapsed
 #> [1] "Timing qqman::qq with 1e+05 points"
-#> 0.245 sec elapsed
+#> 0.239 sec elapsed
 #> [1] "Timing qqman::qq with 1e+06 points"
-#> 2.474 sec elapsed
+#> 2.458 sec elapsed
 ```
 
 So we can expect around 8-10X speedup.
