@@ -46,7 +46,7 @@ validate_and_warn_pvector <- function(pvector){
 #'
 #' @keywords visualization qq qqplot
 #'
-#' @importFrom scattermore scattermoreplot
+#' @import graphics
 #'
 #' @examples
 #' \dontrun{
@@ -59,100 +59,80 @@ qq <- function(pvector, ...) {
   pvector <- validate_and_warn_pvector(pvector)
 
   # Observed and expected
-  o = -log10(sort(pvector,decreasing=FALSE))
-  e = -log10(stats::ppoints(length(pvector) ))
+  o <- rev(-log10(sort(pvector,decreasing=FALSE)))
+  e <- rev(-log10(stats::ppoints(length(pvector) )))
 
-  def_args <- list(cex=2,
+  OEmat <- drop_dense(o, e, 1)
+
+  o <- OEmat[,1]
+  e <- OEmat[,2]
+
+  def_args <- list(pch=20, xlim=c(0, max(e)), ylim=c(0, max(o)),
                    xlab=expression(Expected~~-log[10](italic(p))),
-                   ylab=expression(Observed~~-log[10](italic(p))))
+                   ylab=expression(Observed~~-log[10](italic(p)))
+  )
   dotargs <- list(...)
-  base::tryCatch(do.call("scattermoreplot",
+  base::tryCatch(do.call("plot",
                    c(list(x=e, y=o),
                      def_args[!names(def_args) %in% names(dotargs)], dotargs)),
            warn=stop)
 
   # Add diagonal
-  graphics::abline(0,1,col="red")
+  abline(0,1,col="red")
 
   # Later add shadow region.
   # qqman old example:
   # https://github.com/stephenturner/qqman/blob/v0.0.0/qqman.r#L335
 }
 
-drop_dense <- function(o,e,n_inp){
-  # Prune down to under 10K
-  N_hard <- 1e4
-  if(length(o) < N_hard | n_inp > 10){
-    print(paste0('Pruned down to ',length(o),' points for qq plot'))
-    return(cbind(o,e))
+#' Internal function to prune quantiles of non-important values for
+#' visualization.
+#'
+#' This function is not exposed, since we want to hard-code the parameters
+#' for simplicity of usage.
+#'
+#' @param o A numeric vector of ascending sorted sample/theoretical points.
+#' @param e A numeric vector of ascending sorted theoretical/sample points.
+#' @param n_inp To keep track of which iteration we are in, since this is
+#'              recursive.
+#' @param N_hard Desired upperbound on number of points to plot.
+#' @param max_iter Maximum number of rounds to try to prune points.
+#' @return data.frame with o and e pruned as columns.
+#' @noRd
+drop_dense <- function(o, e, n_inp, N_hard = 1e4, max_iter = 10){
+  if(length(o) < N_hard | n_inp > max_iter){
+    return(data.frame(o=o,e=e))
   }
   mino <- min(o)
   maxo <- max(o)
   mine <- min(e)
   maxe <- max(e)
+  leno <- length(o)
+  lene <- length(e)
 
-  distThreshold <- (maxo - mino)/(N_hard)
+  o_width <- maxo - mino
+  e_width <- maxe - mine
+  distThreshold <- (o_width)/(N_hard)
 
-  distLo <- abs(o - c(mino - 100, o[1:(length(o)-1)]))
-  distRo <- abs(o - c(o[2:length(o)], maxo + 100))
-  distLe <- abs(e - c(mine - 100, e[1:(length(e)-1)]))
-  distRe <- abs(e - c(e[2:length(e)], maxe + 100))
+  padded_o <- c(mino - o_width, o, o + o_width)
+  padded_e <- c(mine - e_width, e, e + e_width)
 
-  distSurr <- distLo+distRo+distLe+distRe
+  # Fast l1 norm
+  distSurr <- (padded_o[3:(leno+2)] - padded_o[1:leno]) +
+    (padded_e[3:(leno+2)] - padded_e[1:leno])
+
+  # Find points that are surrounded by close points
   small_inds <- which(distSurr < distThreshold)
 
+  # Only prune the even indicies
   evens <- function(x) subset(x, x %% 2 == 0)
   small_inds <- evens(small_inds)
+
+  # Case where we cannot remove more... So prevent stack overflow.
   if(length(small_inds) == 0){
-    return(drop_dense(o, e,11))
+    return(drop_dense(o, e, max_iter + 1))
   }
 
-  return(drop_dense(o[-small_inds], e[-small_inds],n_inp+1))
-}
-
-#' Creates a Q-Q plot, with redundant points removed
-#'
-#' Creates a quantile-quantile plot from p-values from a GWAS study. We compare
-#' the data quantile with a theoretical quantile from a uniform distribution.
-#' This code is mostly adapted from the \code{qqman} package, but improved
-#' for speed. Here we drop redundant points, where they are so dense in the plot
-#' that we would not see them anyways. This makes the plot much faster.
-#'
-#' @param pvector A numeric vector of p-values.
-#' @param ... Other arguments passed to \code{plot()}
-#'
-#' @keywords visualization qq qqplot
-#'
-#' @examples
-#' \dontrun{
-#' qq_drop_dense(stats::runif(1e6))
-#' }
-#' @export
-qq_drop_dense <- function(pvector, ...) {
-
-  # User is warned
-  pvector <- validate_and_warn_pvector(pvector)
-
-  # Observed and expected
-  o = -log10(sort(pvector,decreasing=TRUE))
-  e = rev(-log10(stats::ppoints(length(pvector) )))
-
-  OEmat <- drop_dense(o,e,1)
-
-  o <- OEmat[,1]
-  e <- OEmat[,2]
-
-  # Use base plotting
-  def_args <- list(pch=20, xlim=c(0, max(e)), ylim=c(0, max(o)),
-                   xlab=expression(Expected~~-log[10](italic(p))),
-                   ylab=expression(Observed~~-log[10](italic(p)))
-  )
-  dotargs <- list(...)
-
-  tryCatch(do.call("plot", c(list(x=e, y=o), def_args[!names(def_args) %in% names(dotargs)], dotargs)), warn=stop)
-
-  # Add diagonal
-  abline(0,1,col="red")
-
-  # Later add shadow region.
+  return(drop_dense(o[-small_inds], e[-small_inds],
+                    n_inp+1))
 }
