@@ -59,10 +59,10 @@ qq <- function(pvector, ...) {
   pvector <- validate_and_warn_pvector(pvector)
 
   # Observed and expected
-  o <- rev(-log10(sort(pvector,decreasing=FALSE)))
-  e <- rev(-log10(stats::ppoints(length(pvector) )))
+  o <- -log10(sort(pvector,decreasing=FALSE))
+  e <- -log10(stats::ppoints(length(pvector)))
 
-  OEmat <- drop_dense(o, e, 1)
+  OEmat <- drop_dense(o, e)
 
   o <- OEmat[,1]
   e <- OEmat[,2]
@@ -91,48 +91,46 @@ qq <- function(pvector, ...) {
 #' This function is not exposed, since we want to hard-code the parameters
 #' for simplicity of usage.
 #'
-#' @param o A numeric vector of ascending sorted sample/theoretical points.
-#' @param e A numeric vector of ascending sorted theoretical/sample points.
-#' @param n_inp To keep track of which iteration we are in, since this is
-#'              recursive.
+#' @param o A numeric vector of descending sorted sample/theoretical points.
+#' @param e A numeric vector of descending sorted theoretical/sample points.
 #' @param N_hard Desired upperbound on number of points to plot.
-#' @param max_iter Maximum number of rounds to try to prune points.
 #' @return data.frame with o and e pruned as columns.
 #' @noRd
-drop_dense <- function(o, e, n_inp, N_hard = 1e4, max_iter = 10){
-  if(length(o) < N_hard | n_inp > max_iter){
+drop_dense <- function(o, e, N_hard = 1e3){
+  if(length(o) < N_hard){
     return(data.frame(o=o,e=e))
   }
-  mino <- min(o)
-  maxo <- max(o)
-  mine <- min(e)
-  maxe <- max(e)
+  evens <- function(x) subset(x, x %% 2 == 0)
   leno <- length(o)
   lene <- length(e)
-
+  mino <- o[leno]
+  maxo <- o[1]
+  mine <- e[leno]
+  maxe <- e[1]
   o_width <- maxo - mino
   e_width <- maxe - mine
   distThreshold <- (o_width)/(N_hard)
 
-  padded_o <- c(mino - o_width, o, o + o_width)
-  padded_e <- c(mine - e_width, e, e + e_width)
+  while(leno > N_hard){
+    padded_o <- c(maxo + o_width,o,mino - o_width)
+    padded_e <- c(maxe + e_width,e,mine - e_width)
+    # Fast l1 norm
+    distSurr <- (padded_o[1:leno] - padded_o[3:(leno+2)] ) +
+      (padded_e[1:leno] - padded_e[3:(leno+2)])
+    # Find points that are surrounded by close points
+    small_inds <- which(distSurr < distThreshold)
 
-  # Fast l1 norm
-  distSurr <- (padded_o[3:(leno+2)] - padded_o[1:leno]) +
-    (padded_e[3:(leno+2)] - padded_e[1:leno])
-
-  # Find points that are surrounded by close points
-  small_inds <- which(distSurr < distThreshold)
-
-  # Only prune the even indicies
-  evens <- function(x) subset(x, x %% 2 == 0)
-  small_inds <- evens(small_inds)
-
-  # Case where we cannot remove more... So prevent stack overflow.
-  if(length(small_inds) == 0){
-    return(drop_dense(o, e, max_iter + 1))
+    # Only prune the even indicies
+    small_inds <- evens(small_inds)
+    # Case where we cannot remove more.
+    if(length(small_inds) == 0){
+      break
+    }
+    o <- o[-small_inds]
+    e <- e[-small_inds]
+    si <- length(small_inds)
+    leno <- leno - si
+    lene <- lene - si
   }
-
-  return(drop_dense(o[-small_inds], e[-small_inds],
-                    n_inp+1))
+  return(return(data.frame(o=o,e=e)))
 }

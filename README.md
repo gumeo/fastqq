@@ -6,34 +6,34 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-`fastqq` is intended to allow users that create quantile-quantile plots.
-Originally intended for large scale genome wide association studies
-(GWAS). This is to investigate whether we have associations that are
-stronger than what one would expect by pure randomness. In these cases,
-the user often plots tens to hundreds of millions of points. Creating
-scatter plots with so many points is usually not efficient, since the
-graphics devices store all the data, such that the plot can be rescaled
-or plotted in a vector graphics format, (where again all the data is
+`fastqq` is intended for creating quantile-quantile plots. Initially
+intended for large-scale genome-wide association studies (GWAS). This is
+to investigate whether we have associations that could be stronger than
+what one would expect by pure randomness. In these cases, the user often
+plots tens to hundreds of millions of points. Creating scatter plots
+with so many points is usually not efficient since the graphics devices
+store all the data, such that the visualization can be rescaled or
+plotted in a vector graphics format (where again all the data is
 stored).
 
-A better and faster approach in these cases is to note, that many of the
-points are so close to each other, that there is no value in including
-them in the plot. QQ style plots, are usually a monotonically increasing
+A better and faster approach in these cases is to note that many of the
+points are so close to each other that there is no value in including
+them in the plot. QQ style plots are usually a monotonically increasing
 sequence of points, so we can easily employ fast filtering to remove
 redundant points, that would otherwise not be visible in the final plot
 anyways.
 
 We provide faster alternatives to `qqman::qq`, `stats::qqplot` and
-`stats::qqnorm`. We also provide the function `fastqq::drop_dense`, such
-that the user can extract the data, to plot with `ggplot`.
+`stats::qqnorm`. We also provide the function `fastqq::drop_dense` such
+that the user can extract the data to plot with `ggplot`.
 
 See examples below on how this can be achieved.
 
 **Note** that this package is inspired by the `qqman` package, which has
 now [been archived](https://github.com/stephenturner/qqman). The
 interface to the `qq` function should be very similar, and `fastqq::qq`
-should ideally be a drop in replacement for `qqman::qq`. I created this
-package, since it could take 30-60 minutes to render a single plot with
+should ideally be a drop-in replacement for `qqman::qq`. I created this
+package since it could take 30-60 minutes to render a single plot with
 `qqman::qq`.
 
 ## Installation
@@ -92,28 +92,31 @@ time_method <- function(pkg_name, method){
     tictoc::toc()  
   }
 }
-
+N_test <- c(1e3,1e4,1e5,1e6)
 time_method('fastqq','qq')
 #> [1] "Timing fastqq::qq with 1000 points"
-#> 0.023 sec elapsed
+#> 0.024 sec elapsed
 #> [1] "Timing fastqq::qq with 10000 points"
-#> 0.02 sec elapsed
+#> 0.005 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+05 points"
-#> 0.053 sec elapsed
+#> 0.025 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+06 points"
-#> 0.35 sec elapsed
+#> 0.255 sec elapsed
+N_test <- c(1e3,1e4,1e5,1e6)
 time_method('qqman','qq')
 #> [1] "Timing qqman::qq with 1000 points"
 #> 0.003 sec elapsed
 #> [1] "Timing qqman::qq with 10000 points"
 #> 0.025 sec elapsed
 #> [1] "Timing qqman::qq with 1e+05 points"
-#> 0.242 sec elapsed
+#> 0.241 sec elapsed
 #> [1] "Timing qqman::qq with 1e+06 points"
-#> 2.446 sec elapsed
+#> 2.467 sec elapsed
 ```
 
-So we can expect around 8-10X speedup.
+So we can expect around 8-10X speedup, and for 100 million points (order
+of magnitude for modern GWAS), `fastqq::qq` takes 30 seconds on the same
+hardware as for the timings above.
 
 # Note on other efforts
 
