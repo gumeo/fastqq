@@ -94,7 +94,7 @@ time_method <- function(pkg_name, method){
     tictoc::toc()  
   }
 }
-N_test <- c(1e3,1e4,1e5,1e6)
+N_test <- c(1e3,1e4,1e5,1e6,1e8)
 time_method('fastqq','qq')
 N_test <- c(1e3,1e4,1e5,1e6)
 time_method('qqman','qq')

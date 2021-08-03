@@ -96,11 +96,10 @@ qq <- function(pvector, ...) {
 #' @param N_hard Desired upperbound on number of points to plot.
 #' @return data.frame with o and e pruned as columns.
 #' @noRd
-drop_dense <- function(o, e, N_hard = 1e3){
+drop_dense <- function(o, e, N_hard = 1e4){
   if(length(o) < N_hard){
     return(data.frame(o=o,e=e))
   }
-  evens <- function(x) subset(x, x %% 2 == 0)
   leno <- length(o)
   lene <- length(e)
   mino <- o[leno]
@@ -109,28 +108,23 @@ drop_dense <- function(o, e, N_hard = 1e3){
   maxe <- e[1]
   o_width <- maxo - mino
   e_width <- maxe - mine
-  distThreshold <- (o_width)/(N_hard)
+  distThreshold <- min(o_width, e_width)/(N_hard)
 
-  while(leno > N_hard){
-    padded_o <- c(maxo + o_width,o,mino - o_width)
-    padded_e <- c(maxe + e_width,e,mine - e_width)
-    # Fast l1 norm
-    distSurr <- (padded_o[1:leno] - padded_o[3:(leno+2)] ) +
-      (padded_e[1:leno] - padded_e[3:(leno+2)])
-    # Find points that are surrounded by close points
-    small_inds <- which(distSurr < distThreshold)
-
-    # Only prune the even indicies
-    small_inds <- evens(small_inds)
-    # Case where we cannot remove more.
-    if(length(small_inds) == 0){
-      break
+  keep_inds <- list(1)
+  num_ind_added <- 1
+  d <- (e[1] - e[2]) + (o[1] - o[2])
+  for(i in 2:(leno-1)){
+    d_x <- (e[i] - e[i+1]) + (o[i] - o[i+1])
+    if(d < distThreshold){
+      d <- d + d_x
+    }else{
+      num_ind_added <- num_ind_added + 1
+      keep_inds[[num_ind_added]] <- i
+      d <- d_x
     }
-    o <- o[-small_inds]
-    e <- e[-small_inds]
-    si <- length(small_inds)
-    leno <- leno - si
-    lene <- lene - si
   }
-  return(return(data.frame(o=o,e=e)))
+  keep_inds[[num_ind_added+1]] <- leno
+  keep_inds <- unlist(keep_inds)
+
+  return(return(data.frame(o=o[keep_inds],e=e[keep_inds])))
 }

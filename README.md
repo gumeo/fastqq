@@ -92,26 +92,28 @@ time_method <- function(pkg_name, method){
     tictoc::toc()  
   }
 }
-N_test <- c(1e3,1e4,1e5,1e6)
+N_test <- c(1e3,1e4,1e5,1e6,1e8)
 time_method('fastqq','qq')
 #> [1] "Timing fastqq::qq with 1000 points"
-#> 0.024 sec elapsed
-#> [1] "Timing fastqq::qq with 10000 points"
-#> 0.005 sec elapsed
-#> [1] "Timing fastqq::qq with 1e+05 points"
 #> 0.025 sec elapsed
+#> [1] "Timing fastqq::qq with 10000 points"
+#> 0.015 sec elapsed
+#> [1] "Timing fastqq::qq with 1e+05 points"
+#> 0.041 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+06 points"
-#> 0.255 sec elapsed
+#> 0.24 sec elapsed
+#> [1] "Timing fastqq::qq with 1e+08 points"
+#> 23.446 sec elapsed
 N_test <- c(1e3,1e4,1e5,1e6)
 time_method('qqman','qq')
 #> [1] "Timing qqman::qq with 1000 points"
 #> 0.003 sec elapsed
 #> [1] "Timing qqman::qq with 10000 points"
-#> 0.025 sec elapsed
+#> 0.024 sec elapsed
 #> [1] "Timing qqman::qq with 1e+05 points"
-#> 0.241 sec elapsed
+#> 0.242 sec elapsed
 #> [1] "Timing qqman::qq with 1e+06 points"
-#> 2.467 sec elapsed
+#> 2.468 sec elapsed
 ```
 
 So we can expect around 8-10X speedup, and for 100 million points (order
