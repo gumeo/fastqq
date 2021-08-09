@@ -2,7 +2,7 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #' @export
-drop_dense_internal <- function(sorted_sample, sorted_theoretical) {
-    .Call('_fastqq_drop_dense_internal', PACKAGE = 'fastqq', sorted_sample, sorted_theoretical)
+drop_dense_internal <- function(sorted_sample, sorted_theoretical, N_hard) {
+    .Call('_fastqq_drop_dense_internal', PACKAGE = 'fastqq', sorted_sample, sorted_theoretical, N_hard)
 }
 

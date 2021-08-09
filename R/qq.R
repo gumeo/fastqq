@@ -100,6 +100,7 @@ drop_dense <- function(o, e, N_hard = 1e4){
   if(length(o) < N_hard){
     return(data.frame(o=o,e=e))
   }
+  return(drop_dense_internal(o,e,N_hard))
   leno <- length(o)
   lene <- length(e)
   mino <- o[leno]

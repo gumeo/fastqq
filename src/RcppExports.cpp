@@ -11,20 +11,21 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // drop_dense_internal
-IntegerVector drop_dense_internal(NumericVector sorted_sample, NumericVector sorted_theoretical);
-RcppExport SEXP _fastqq_drop_dense_internal(SEXP sorted_sampleSEXP, SEXP sorted_theoreticalSEXP) {
+DataFrame drop_dense_internal(NumericVector sorted_sample, NumericVector sorted_theoretical, int N_hard);
+RcppExport SEXP _fastqq_drop_dense_internal(SEXP sorted_sampleSEXP, SEXP sorted_theoreticalSEXP, SEXP N_hardSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type sorted_sample(sorted_sampleSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type sorted_theoretical(sorted_theoreticalSEXP);
-    rcpp_result_gen = Rcpp::wrap(drop_dense_internal(sorted_sample, sorted_theoretical));
+    Rcpp::traits::input_parameter< int >::type N_hard(N_hardSEXP);
+    rcpp_result_gen = Rcpp::wrap(drop_dense_internal(sorted_sample, sorted_theoretical, N_hard));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_fastqq_drop_dense_internal", (DL_FUNC) &_fastqq_drop_dense_internal, 2},
+    {"_fastqq_drop_dense_internal", (DL_FUNC) &_fastqq_drop_dense_internal, 3},
     {NULL, NULL, 0}
 };
 
