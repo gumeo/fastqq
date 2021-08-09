@@ -55,7 +55,7 @@ validate_and_warn_pvector <- function(pvector){
 #' @export
 qq <- function(pvector, ...) {
 
-  # User is warned
+  # User is warned, takes 5 seconds for 1e8 points...
   pvector <- validate_and_warn_pvector(pvector)
 
   # Observed and expected
@@ -101,31 +101,4 @@ drop_dense <- function(o, e, N_hard = 1e4){
     return(data.frame(o=o,e=e))
   }
   return(drop_dense_internal(o,e,N_hard))
-  leno <- length(o)
-  lene <- length(e)
-  mino <- o[leno]
-  maxo <- o[1]
-  mine <- e[leno]
-  maxe <- e[1]
-  o_width <- maxo - mino
-  e_width <- maxe - mine
-  distThreshold <- min(o_width, e_width)/(N_hard)
-
-  keep_inds <- list(1)
-  num_ind_added <- 1
-  d <- (e[1] - e[2]) + (o[1] - o[2])
-  for(i in 2:(leno-1)){
-    d_x <- (e[i] - e[i+1]) + (o[i] - o[i+1])
-    if(d < distThreshold){
-      d <- d + d_x
-    }else{
-      num_ind_added <- num_ind_added + 1
-      keep_inds[[num_ind_added]] <- i
-      d <- d_x
-    }
-  }
-  keep_inds[[num_ind_added+1]] <- leno
-  keep_inds <- unlist(keep_inds)
-
-  return(return(data.frame(o=o[keep_inds],e=e[keep_inds])))
 }

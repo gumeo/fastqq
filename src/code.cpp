@@ -10,7 +10,7 @@ DataFrame drop_dense_internal(NumericVector sorted_sample,
                               int N_hard) {
   NumericVector x = clone(sorted_sample);
   NumericVector y = clone(sorted_theoretical);
-  size_t len = x.length();
+  size_t len = y.length();
   double minx = x[len-1];
   double maxx = x[0];
   double miny = y[len-1];
