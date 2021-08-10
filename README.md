@@ -58,6 +58,20 @@ The following is an example from very simple simulated data:
 
 ``` r
 library(fastqq)
+#> ** ----------------------------------------------------------------- **
+#> ** fastqq
+#> **  - Faster QQ plots for large number of points
+#> **
+#> ** Maintainer : Gudmundur Einarsson  (gudmundur.einarsson.phd@gmail.com)
+#> **
+#> ** Please file issues on github.com/gumeo/fastqq.
+#> ** If you use this package, please cite it.
+#> ** ----------------------------------------------------------------- **
+#> 
+#> Attaching package: 'fastqq'
+#> The following object is masked from 'package:stats':
+#> 
+#>     qqplot
 set.seed(42)
 p_simulated <- runif(10000)
 # Classic way to do this with qqman
@@ -95,25 +109,25 @@ time_method <- function(pkg_name, method){
 N_test <- c(1e3,1e4,1e5,1e6,1e8)
 time_method('fastqq','qq')
 #> [1] "Timing fastqq::qq with 1000 points"
-#> 0.025 sec elapsed
+#> 0.024 sec elapsed
 #> [1] "Timing fastqq::qq with 10000 points"
 #> 0.012 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+05 points"
-#> 0.025 sec elapsed
+#> 0.026 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+06 points"
-#> 0.129 sec elapsed
+#> 0.123 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+08 points"
-#> 9.83 sec elapsed
+#> 9.445 sec elapsed
 N_test <- c(1e3,1e4,1e5,1e6)
 time_method('qqman','qq')
 #> [1] "Timing qqman::qq with 1000 points"
-#> 0.002 sec elapsed
+#> 0.003 sec elapsed
 #> [1] "Timing qqman::qq with 10000 points"
-#> 0.024 sec elapsed
+#> 0.025 sec elapsed
 #> [1] "Timing qqman::qq with 1e+05 points"
-#> 0.243 sec elapsed
+#> 0.248 sec elapsed
 #> [1] "Timing qqman::qq with 1e+06 points"
-#> 2.475 sec elapsed
+#> 2.486 sec elapsed
 ```
 
 So we can expect around 8-10X speedup, and for 100 million points (order

@@ -56,13 +56,13 @@ validate_and_warn_pvector <- function(pvector){
 qq <- function(pvector, ...) {
 
   # User is warned, takes 5 seconds for 1e8 points...
-  pvector <- validate_and_warn_pvector(pvector)
+  #pvector <- validate_and_warn_pvector(pvector)
 
   # Observed and expected
-  o <- -log10(sort(pvector,decreasing=FALSE))
-  e <- -log10(stats::ppoints(length(pvector)))
+  #o <- -log10(sort(pvector,decreasing=FALSE))
+  #e <- -log10(stats::ppoints(length(pvector)))
 
-  OEmat <- drop_dense(o, e)
+  OEmat <- drop_dense_qq(pvector)
 
   o <- OEmat[,1]
   e <- OEmat[,2]
@@ -83,6 +83,52 @@ qq <- function(pvector, ...) {
   # Later add shadow region.
   # qqman old example:
   # https://github.com/stephenturner/qqman/blob/v0.0.0/qqman.r#L335
+}
+
+#' Creates a Q-Q plot
+#'
+#' Faster alternative to \code{stats::qqplot()}. For more than 1e5 points
+#' we remove excess points, that would not be visible in the plot, since the
+#' points are so close.
+#'
+#' @param x First sample for \code{qqplot}.
+#' @param y Second sample for \code{qqplot}.
+#' @param xlab x label for plot.
+#' @param ylab y label for plot.
+#' @param plot.it Should the plot be created.
+#' @param ... Other arguments passed to \code{plot()}
+#'
+#' @keywords visualization qq qqplot
+#'
+#' @import graphics
+#'
+#' @examples
+#' \dontrun{
+#' qqplot(stats::runif(1e6),stats::runif(1e6))
+#' }
+#' @export
+qqplot <- function(x, y, plot.it = TRUE,
+                   xlab = deparse1(substitute(x)),
+                   ylab = deparse1(substitute(y)), ...) {
+  sx <- sort(x)
+  sy <- sort(y)
+  lenx <- length(sx)
+  leny <- length(sy)
+  if (leny < lenx)
+    sx <- approx(1L:lenx, sx, n = leny)$y
+  if (leny > lenx)
+    sy <- approx(1L:leny, sy, n = lenx)$y
+
+  # Only difference from stats::qqplot
+  if(length(sx) > 1e5){
+    XYmat <- drop_dense(sx,sy)
+    # Make it faster by dropping excess points for plotting
+    sx <- XYmat[,1]
+    sy <- XYmat[,2]
+  }
+  if (plot.it)
+    plot(sx, sy, xlab = xlab, ylab = ylab, ...)
+  invisible(list(x = sx, y = sy))
 }
 
 #' Internal function to prune quantiles of non-important values for

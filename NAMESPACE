@@ -2,6 +2,7 @@
 
 export(drop_dense_internal)
 export(qq)
+export(qqplot)
 import(graphics)
 importFrom(Rcpp,sourceCpp)
 useDynLib(fastqq)
