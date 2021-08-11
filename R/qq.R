@@ -1,4 +1,22 @@
-#' Validate values in p-value array
+#  File R/qq.R
+#  Part of the R package fastqq.
+#
+#  Copyright (C) 2021 Gudmundur Einarsson
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  A copy of the GNU General Public License is available at
+#  https://www.R-project.org/Licenses/
+
+#' Clean values in p-value array
 #'
 #' Helper function to sanitize and print warnings about unwanted values. Helper
 #' function, which is not exposed.
@@ -6,40 +24,22 @@
 #' @param pvector A numeric vector of p-values.
 #' @return Vector where invalid values have been removed.
 #' @noRd
-validate_and_warn_pvector <- function(pvector){
-  # Check for sensible input
-  if (!is.numeric(pvector)) stop("Input must be numeric.")
-  if(base::any(base::is.na(pvector))){
-    warning("Input to qq contains one or more NA values, these will be discarded.")
-  }
-  if(base::any(base::is.nan(pvector))){
-    warning("Input to qq contains one or more NaN values, these will be discarded.")
-  }
-  if(base::any(base::is.null(pvector))){
-    warning("Input to qq contains one or more NULL values, these will be discarded.")
-  }
-  if(base::any(!base::is.finite(pvector))){
-    warning("Input to qq contains one or more non finite values, these will be discarded.")
-  }
-  if(base::any(pvector < 0.0)){
-    warning("Input to qq contains one or more negative values, these will be discarded.")
-  }
-  if(base::any(pvector > 1.0)){
-    warning("Input to qq contains one or more values larger than one, these will be discarded.")
-  }
-  pvector <- pvector[!is.na(pvector) & !is.nan(pvector) & !is.null(pvector) & is.finite(pvector) & pvector<1 & pvector>0]
+clean_pvector <- function(pvector){
+  # Remove
+  pvector <- pvector[!is.na(pvector) & !is.nan(pvector) &
+                       !is.null(pvector) & is.finite(pvector) &
+                       pvector<1 & pvector>0]
   return(pvector)
 }
 
 #' Creates a Q-Q plot
 #'
-#' Creates a quantile-quantile plot from p-values from a GWAS study. We compare
+#' Creates a quantile-quantile plot from p-values from an association study,
+#' e.g. a genome wide association study (GWAS). We compare
 #' the data quantile with a theoretical quantile from a uniform distribution.
 #' This code is mostly adapted from the \code{qqman} package, but improved
 #' for speed. A graph with a hundred million points should only take a few
-#' seconds to generate. Note that the graph is rasterised, so you should
-#' specify the size of the plot in pixels, (that you plan to export), in the
-#' input.
+#' seconds to generate.
 #'
 #' @param pvector A numeric vector of p-values.
 #' @param ... Other arguments passed to \code{plot()}
@@ -54,18 +54,19 @@ validate_and_warn_pvector <- function(pvector){
 #' }
 #' @export
 qq <- function(pvector, ...) {
-
-  # User is warned, takes 5 seconds for 1e8 points...
-  #pvector <- validate_and_warn_pvector(pvector)
-
-  # Observed and expected
-  #o <- -log10(sort(pvector,decreasing=FALSE))
-  #e <- -log10(stats::ppoints(length(pvector)))
-
-  OEmat <- drop_dense_qq(pvector)
-
-  o <- OEmat[,1]
-  e <- OEmat[,2]
+  # Hard coded limit, for when we switch to pruning
+  N_hard <- 10000
+  if(length(pvector) <= N_hard){
+    pvector <- clean_pvector(pvector)
+    # Observed and expected
+    o <- -log10(sort(pvector,decreasing=FALSE))
+    e <- -log10(stats::ppoints(length(pvector)))
+  }else{
+    # All in cpp
+    OEmat <- drop_dense_qq(pvector, N_hard)
+    o <- OEmat[,1]
+    e <- OEmat[,2]
+  }
 
   def_args <- list(pch=20, xlim=c(0, max(e)), ylim=c(0, max(o)),
                    xlab=expression(Expected~~-log[10](italic(p))),
@@ -110,25 +111,24 @@ qq <- function(pvector, ...) {
 qqplot <- function(x, y, plot.it = TRUE,
                    xlab = deparse1(substitute(x)),
                    ylab = deparse1(substitute(y)), ...) {
-  sx <- sort(x)
-  sy <- sort(y)
-  lenx <- length(sx)
-  leny <- length(sy)
+  sx_orig <- sort(x,decreasing = TRUE)
+  sy_orig <- sort(y,decreasing = TRUE)
+  lenx <- length(sx_orig)
+  leny <- length(sy_orig)
   if (leny < lenx)
-    sx <- approx(1L:lenx, sx, n = leny)$y
+    sx_orig <- approx(1L:lenx, sx_orig, n = leny)$y
   if (leny > lenx)
-    sy <- approx(1L:leny, sy, n = lenx)$y
+    sy_orig <- approx(1L:leny, sy_orig, n = lenx)$y
 
   # Only difference from stats::qqplot
-  if(length(sx) > 1e5){
-    XYmat <- drop_dense(sx,sy)
-    # Make it faster by dropping excess points for plotting
-    sx <- XYmat[,1]
-    sy <- XYmat[,2]
-  }
+  XYmat <- drop_dense(sx_orig,sy_orig)
+  # Make it faster by dropping excess points for plotting
+  sx <- XYmat[,1]
+  sy <- XYmat[,2]
   if (plot.it)
     plot(sx, sy, xlab = xlab, ylab = ylab, ...)
-  invisible(list(x = sx, y = sy))
+  # Return all values to be consistent with prior usage
+  invisible(list(x = sx_orig, y = sy_orig))
 }
 
 #' Internal function to prune quantiles of non-important values for
@@ -137,14 +137,72 @@ qqplot <- function(x, y, plot.it = TRUE,
 #' This function is not exposed, since we want to hard-code the parameters
 #' for simplicity of usage.
 #'
-#' @param o A numeric vector of descending sorted sample/theoretical points.
-#' @param e A numeric vector of descending sorted theoretical/sample points.
+#' @param x A numeric vector of descending sorted sample/theoretical points.
+#' @param y A numeric vector of descending sorted theoretical/sample points.
 #' @param N_hard Desired upperbound on number of points to plot.
 #' @return data.frame with o and e pruned as columns.
-#' @noRd
-drop_dense <- function(o, e, N_hard = 1e4){
-  if(length(o) < N_hard){
-    return(data.frame(o=o,e=e))
+#' @export
+drop_dense <- function(x, y, N_hard = 1e4){
+  if(length(x) < N_hard){
+    return(data.frame(x=x,y=y))
   }
-  return(drop_dense_internal(o,e,N_hard))
+  return(drop_dense_internal(x,y,N_hard))
 }
+
+#' Creates a Q-Q plot for comparing with normal quantiles
+#'
+#' Faster alternative to \code{stats::qqnorm()}. For more than 1e5 points
+#' we remove excess points, that would not be visible in the plot, since the
+#' points are so close. Otherwise this should work exactly the same, and the
+#' code is mostly adapted from \code{stats::qqnorm()}. This code produces
+#' more lightweight plots for excessive ammounts of data.
+#'
+#' @param y sample, to compare to normal quantiles.
+#' @param ylim graphical limits.
+#' @param main Plot title.
+#' @param xlab X label.
+#' @param ylab Y label.
+#' @param datax logical. Should data values be on x-axis?
+#' @param plot.it Should the plot be created.
+#' @param ... Other arguments passed to \code{plot()}
+#'
+#' @return \code{data.frame} with sorted sample and normal quantiles, \code{NA}
+#' values are excluded.
+#'
+#' @keywords visualization qq qqplot
+#'
+#' @import graphics
+#'
+#' @examples
+#' \dontrun{
+#' qqnorm(stats::rnorm(1e6))
+#' }
+#' @export
+qqnorm <-
+  function(y, ylim, main = "Normal Q-Q Plot",
+           xlab = "Theoretical Quantiles", ylab = "Sample Quantiles",
+           plot.it = TRUE, datax = FALSE, ...)
+  {
+    # Let's remove NA, and that is the default behavior here.
+    # Sorting removes NA
+    y <- sort(y, decreasing = TRUE)
+    if(0 == (n <- length(y)))
+      stop("y is empty or has only NAs")
+    if (plot.it && missing(ylim))
+      ylim <- range(y)
+    x <- rev(qnorm(ppoints(n)))
+    # Only difference from stats::qqplot
+    XYmat <- drop_dense(x,y)
+    # Make it faster by dropping excess points for plotting
+    sx <- XYmat[,1]
+    sy <- XYmat[,2]
+    if(plot.it){
+      if (datax){
+        plot(sy, sx, main = main, xlab = ylab, ylab = xlab, xlim = ylim, ...)
+      }else{
+        plot(sx, sy, main = main, xlab = xlab, ylab = ylab, ylim = ylim, ...)
+      }
+    }
+    # Order is now inconsistent with stats::qqnorm
+    invisible(if(datax) list(x = y, y = x) else list(x = x, y = y))
+  }

@@ -24,20 +24,21 @@ BEGIN_RCPP
 END_RCPP
 }
 // drop_dense_qq
-DataFrame drop_dense_qq(NumericVector sample);
-RcppExport SEXP _fastqq_drop_dense_qq(SEXP sampleSEXP) {
+DataFrame drop_dense_qq(NumericVector sample, int N_hard);
+RcppExport SEXP _fastqq_drop_dense_qq(SEXP sampleSEXP, SEXP N_hardSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type sample(sampleSEXP);
-    rcpp_result_gen = Rcpp::wrap(drop_dense_qq(sample));
+    Rcpp::traits::input_parameter< int >::type N_hard(N_hardSEXP);
+    rcpp_result_gen = Rcpp::wrap(drop_dense_qq(sample, N_hard));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
     {"_fastqq_drop_dense_internal", (DL_FUNC) &_fastqq_drop_dense_internal, 3},
-    {"_fastqq_drop_dense_qq", (DL_FUNC) &_fastqq_drop_dense_qq, 1},
+    {"_fastqq_drop_dense_qq", (DL_FUNC) &_fastqq_drop_dense_qq, 2},
     {NULL, NULL, 0}
 };
 

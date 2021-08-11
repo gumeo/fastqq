@@ -57,23 +57,9 @@ devtools::install_github("gumeo/fastqq")
 The following is an example from very simple simulated data:
 
 ``` r
-library(fastqq)
-#> ** ----------------------------------------------------------------- **
-#> ** fastqq
-#> **  - Faster QQ plots for large number of points
-#> **
-#> ** Maintainer : Gudmundur Einarsson  (gudmundur.einarsson.phd@gmail.com)
-#> **
-#> ** Please file issues on github.com/gumeo/fastqq.
-#> ** If you use this package, please cite it.
-#> ** ----------------------------------------------------------------- **
-#> 
-#> Attaching package: 'fastqq'
-#> The following object is masked from 'package:stats':
-#> 
-#>     qqplot
+suppressPackageStartupMessages(library(fastqq))
 set.seed(42)
-p_simulated <- runif(10000)
+p_simulated <- runif(100000)
 # Classic way to do this with qqman
 qqman::qq(p_simulated)
 ```
@@ -109,15 +95,15 @@ time_method <- function(pkg_name, method){
 N_test <- c(1e3,1e4,1e5,1e6,1e8)
 time_method('fastqq','qq')
 #> [1] "Timing fastqq::qq with 1000 points"
-#> 0.024 sec elapsed
+#> 0.025 sec elapsed
 #> [1] "Timing fastqq::qq with 10000 points"
-#> 0.012 sec elapsed
+#> 0.025 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+05 points"
-#> 0.026 sec elapsed
+#> 0.025 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+06 points"
-#> 0.123 sec elapsed
+#> 0.127 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+08 points"
-#> 9.445 sec elapsed
+#> 9.803 sec elapsed
 N_test <- c(1e3,1e4,1e5,1e6)
 time_method('qqman','qq')
 #> [1] "Timing qqman::qq with 1000 points"
@@ -125,14 +111,48 @@ time_method('qqman','qq')
 #> [1] "Timing qqman::qq with 10000 points"
 #> 0.025 sec elapsed
 #> [1] "Timing qqman::qq with 1e+05 points"
-#> 0.248 sec elapsed
+#> 0.241 sec elapsed
 #> [1] "Timing qqman::qq with 1e+06 points"
-#> 2.486 sec elapsed
+#> 2.482 sec elapsed
 ```
 
-So we can expect around 8-10X speedup, and for 100 million points (order
-of magnitude for modern GWAS), `fastqq::qq` takes 30 seconds on the same
+So we can expect around 25X speedup, and for 100 million points (order
+of magnitude for modern GWAS), `fastqq::qq` takes 10 seconds on the same
 hardware as for the timings above.
+
+### `qqnorm` example
+
+We can use `qqnorm` just like from `stats::qqnorm`. The only difference
+is in the output, we return sorted output, and exclude `NA`s.
+
+``` r
+set.seed(42)
+suppressPackageStartupMessages(library(fastqq))
+fastqq::qqnorm(rnorm(1e6))
+```
+
+<img src="man/figures/README-qqnorm_ex-1.png" width="100%" />
+
+### `qqplot` example
+
+``` r
+set.seed(42)
+suppressPackageStartupMessages(library(fastqq))
+fastqq::qqplot(rnorm(1e6),rnorm(1e6))
+```
+
+<img src="man/figures/README-qqplot_ex-1.png" width="100%" />
+
+### `drop_dense` and plot with `ggplot` example
+
+``` r
+set.seed(42)
+suppressPackageStartupMessages(library(fastqq))
+suppressPackageStartupMessages(library(ggplot2))
+fastqq::qqnorm(rnorm(1e6))
+```
+
+<img src="man/figures/README-ggplot-1.png" width="100%" />
 
 # Note on other efforts
 

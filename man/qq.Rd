@@ -12,13 +12,12 @@ qq(pvector, ...)
 \item{...}{Other arguments passed to \code{plot()}}
 }
 \description{
-Creates a quantile-quantile plot from p-values from a GWAS study. We compare
+Creates a quantile-quantile plot from p-values from an association study,
+e.g. a genome wide association study (GWAS). We compare
 the data quantile with a theoretical quantile from a uniform distribution.
 This code is mostly adapted from the \code{qqman} package, but improved
 for speed. A graph with a hundred million points should only take a few
-seconds to generate. Note that the graph is rasterised, so you should
-specify the size of the plot in pixels, (that you plan to export), in the
-input.
+seconds to generate.
 }
 \examples{
 \dontrun{
