@@ -137,17 +137,17 @@ qqplot <- function(x, y, plot.it = TRUE,
 #' This function is not exposed, since we want to hard-code the parameters
 #' for simplicity of usage.
 #'
-#' @param x A numeric vector of descending sorted sample/theoretical points.
-#' @param y A numeric vector of descending sorted theoretical/sample points.
+#' @param x A numeric vector of sample/theoretical points.
+#' @param y A numeric vector of theoretical/sample points.
 #' @param N_hard Desired upperbound on number of points to plot.
 #' @return data.frame with o and e pruned as columns.
 #' @export
 drop_dense <- function(x, y, N_hard = 1e4){
+  x <- sort(x, decreasing = TRUE)
+  y <- sort(y, decreasing = TRUE)
   if(length(x) < N_hard){
     return(data.frame(x=x,y=y))
   }
-  x <- sort(x, decreasing = TRUE)
-  y <- sort(y, decreasing = TRUE)
   return(drop_dense_internal(x,y,N_hard))
 }
 

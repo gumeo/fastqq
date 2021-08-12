@@ -8,9 +8,9 @@ visualization.}
 drop_dense(x, y, N_hard = 10000)
 }
 \arguments{
-\item{x}{A numeric vector of descending sorted sample/theoretical points.}
+\item{x}{A numeric vector of sample/theoretical points.}
 
-\item{y}{A numeric vector of descending sorted theoretical/sample points.}
+\item{y}{A numeric vector of theoretical/sample points.}
 
 \item{N_hard}{Desired upperbound on number of points to plot.}
 }
