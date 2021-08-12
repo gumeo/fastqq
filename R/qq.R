@@ -146,6 +146,8 @@ drop_dense <- function(x, y, N_hard = 1e4){
   if(length(x) < N_hard){
     return(data.frame(x=x,y=y))
   }
+  x <- sort(x, decreasing = TRUE)
+  y <- sort(y, decreasing = TRUE)
   return(drop_dense_internal(x,y,N_hard))
 }
 

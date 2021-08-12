@@ -41,9 +41,10 @@ See examples below on how this can be achieved.
 
 **Note** that this package is inspired by the `qqman` package, which has now
 [been archived](https://github.com/stephenturner/qqman). The interface to the 
-`qq` function should be very similar, and `fastqq::qq` should ideally be a 
+`qq` function should be very similar, and `fastqq::qq` is a 
 drop-in replacement for `qqman::qq`. I created this package since it could take
-30-60 minutes to render a single plot with `qqman::qq`.
+more than 10 minutes to render a single plot with `qqman::qq`. This is also to
+save on memory and other resources, in particular time.
 
 ## Installation
 
@@ -129,7 +130,11 @@ fastqq::qqplot(rnorm(1e6),rnorm(1e6))
 set.seed(42)
 suppressPackageStartupMessages(library(fastqq))
 suppressPackageStartupMessages(library(ggplot2))
-fastqq::qqnorm(rnorm(1e6))
+x <- rnorm(1e6)
+y <- rnorm(1e6)
+df <- fastqq::drop_dense(x, y)
+
+ggplot(df, aes(x=x,y=y)) + geom_point()
 ```
 
 # Note on other efforts

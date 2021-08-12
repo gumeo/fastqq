@@ -32,9 +32,10 @@ See examples below on how this can be achieved.
 **Note** that this package is inspired by the `qqman` package, which has
 now [been archived](https://github.com/stephenturner/qqman). The
 interface to the `qq` function should be very similar, and `fastqq::qq`
-should ideally be a drop-in replacement for `qqman::qq`. I created this
-package since it could take 30-60 minutes to render a single plot with
-`qqman::qq`.
+is a drop-in replacement for `qqman::qq`. I created this package since
+it could take more than 10 minutes to render a single plot with
+`qqman::qq`. This is also to save on memory and other resources, in
+particular time.
 
 ## Installation
 
@@ -59,7 +60,7 @@ The following is an example from very simple simulated data:
 ``` r
 suppressPackageStartupMessages(library(fastqq))
 set.seed(42)
-p_simulated <- runif(100000)
+p_simulated <- runif(1e5)
 # Classic way to do this with qqman
 qqman::qq(p_simulated)
 ```
@@ -72,6 +73,8 @@ fastqq::qq(p_simulated)
 ```
 
 <img src="man/figures/README-example-2.png" width="100%" />
+
+There is no visible difference, and the analysis can proceed as usual.
 
 We can compare the timings of creating the plots, with `qqman`.
 
@@ -95,30 +98,33 @@ time_method <- function(pkg_name, method){
 N_test <- c(1e3,1e4,1e5,1e6,1e8)
 time_method('fastqq','qq')
 #> [1] "Timing fastqq::qq with 1000 points"
-#> 0.025 sec elapsed
+#> 0.023 sec elapsed
 #> [1] "Timing fastqq::qq with 10000 points"
-#> 0.025 sec elapsed
+#> 0.024 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+05 points"
 #> 0.025 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+06 points"
-#> 0.127 sec elapsed
+#> 0.126 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+08 points"
-#> 9.803 sec elapsed
+#> 9.795 sec elapsed
 N_test <- c(1e3,1e4,1e5,1e6)
 time_method('qqman','qq')
 #> [1] "Timing qqman::qq with 1000 points"
 #> 0.003 sec elapsed
 #> [1] "Timing qqman::qq with 10000 points"
-#> 0.025 sec elapsed
+#> 0.024 sec elapsed
 #> [1] "Timing qqman::qq with 1e+05 points"
-#> 0.241 sec elapsed
+#> 0.237 sec elapsed
 #> [1] "Timing qqman::qq with 1e+06 points"
-#> 2.482 sec elapsed
+#> 2.439 sec elapsed
 ```
 
-So we can expect around 25X speedup, and for 100 million points (order
-of magnitude for modern GWAS), `fastqq::qq` takes 10 seconds on the same
-hardware as for the timings above.
+So we can expect around *25X speedup* for a million points. For 100
+million points (order of magnitude for modern GWAS), `fastqq::qq` takes
+10 seconds on the same hardware as for the timings above, `qqman::qq`
+takes more than 13.78 (*80X speedup*) minutes for 100 million points and
+if one saves to a vector graphic output, all the data is stored, and the
+file size scales with the amount of points.
 
 ### `qqnorm` example
 
@@ -149,7 +155,11 @@ fastqq::qqplot(rnorm(1e6),rnorm(1e6))
 set.seed(42)
 suppressPackageStartupMessages(library(fastqq))
 suppressPackageStartupMessages(library(ggplot2))
-fastqq::qqnorm(rnorm(1e6))
+x <- rnorm(1e6)
+y <- rnorm(1e6)
+df <- fastqq::drop_dense(x, y)
+
+ggplot(df, aes(x=x,y=y)) + geom_point()
 ```
 
 <img src="man/figures/README-ggplot-1.png" width="100%" />

@@ -15,7 +15,8 @@
   packageStartupMessage("** Maintainer : Gudmundur Einarsson  (gudmundur.einarsson.phd@gmail.com)")
   packageStartupMessage("**")
   packageStartupMessage("** Please file issues on github.com/gumeo/fastqq.")
-  packageStartupMessage("** If you use this package, please cite it.")
+  packageStartupMessage("** If you use this package, please cite it with the output from:")
+  packageStartupMessage("** citation('fastqq')")
   packageStartupMessage("** ----------------------------------------------------------------- **")
 }
 

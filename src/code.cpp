@@ -45,8 +45,8 @@ DataFrame drop_dense_internal(NumericVector sorted_sample,
   }
   // Do the computation for comparing the speed gain
   DataFrame df = DataFrame::create(
-    Named("sorted_pruned_sample") = NumericVector(final_x.begin(), final_x.end()),
-    Named("sorted_pruned_theoretical") = NumericVector(final_y.begin(), final_y.end())
+    Named("x") = NumericVector(final_x.begin(), final_x.end()),
+    Named("y") = NumericVector(final_y.begin(), final_y.end())
   );
   return df;
 }
