@@ -1,6 +1,6 @@
 Package: fastqq
 Type: Package
-Title: Faster generation of qq plots with large samples.
+Title: Faster generation of qq plots with large samples
 Version: 0.1.0
 Author: Gudmundur Einarsson
 Maintainer: Gudmundur Einarsson <gudmundur.einarsson.phd@gmail.com>

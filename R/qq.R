@@ -111,14 +111,14 @@ qq <- function(pvector, ...) {
 qqplot <- function(x, y, plot.it = TRUE,
                    xlab = deparse1(substitute(x)),
                    ylab = deparse1(substitute(y)), ...) {
-  sx_orig <- sort(x,decreasing = TRUE)
-  sy_orig <- sort(y,decreasing = TRUE)
-  lenx <- length(sx_orig)
-  leny <- length(sy_orig)
+  sx_orig <- base::sort(x,decreasing = TRUE)
+  sy_orig <- base::sort(y,decreasing = TRUE)
+  lenx <- base::length(sx_orig)
+  leny <- base::length(sy_orig)
   if (leny < lenx)
-    sx_orig <- approx(1L:lenx, sx_orig, n = leny)$y
+    sx_orig <- stats::approx(1L:lenx, sx_orig, n = leny)$y
   if (leny > lenx)
-    sy_orig <- approx(1L:leny, sy_orig, n = lenx)$y
+    sy_orig <- stats::approx(1L:leny, sy_orig, n = lenx)$y
 
   # Only difference from stats::qqplot
   XYmat <- drop_dense(sx_orig,sy_orig)
@@ -143,9 +143,9 @@ qqplot <- function(x, y, plot.it = TRUE,
 #' @return data.frame with o and e pruned as columns.
 #' @export
 drop_dense <- function(x, y, N_hard = 1e4){
-  x <- sort(x, decreasing = TRUE)
-  y <- sort(y, decreasing = TRUE)
-  if(length(x) < N_hard){
+  x <- base::sort(x, decreasing = TRUE)
+  y <- base::sort(y, decreasing = TRUE)
+  if(base::length(x) < N_hard){
     return(data.frame(x=x,y=y))
   }
   return(drop_dense_internal(x,y,N_hard))
@@ -180,31 +180,30 @@ drop_dense <- function(x, y, N_hard = 1e4){
 #' qqnorm(stats::rnorm(1e6))
 #' }
 #' @export
-qqnorm <-
-  function(y, ylim, main = "Normal Q-Q Plot",
-           xlab = "Theoretical Quantiles", ylab = "Sample Quantiles",
-           plot.it = TRUE, datax = FALSE, ...)
-  {
-    # Let's remove NA, and that is the default behavior here.
-    # Sorting removes NA
-    y <- sort(y, decreasing = TRUE)
-    if(0 == (n <- length(y)))
-      stop("y is empty or has only NAs")
-    if (plot.it && missing(ylim))
-      ylim <- range(y)
-    x <- rev(qnorm(ppoints(n)))
-    # Only difference from stats::qqplot
-    XYmat <- drop_dense(x,y)
-    # Make it faster by dropping excess points for plotting
-    sx <- XYmat[,1]
-    sy <- XYmat[,2]
-    if(plot.it){
-      if (datax){
-        plot(sy, sx, main = main, xlab = ylab, ylab = xlab, xlim = ylim, ...)
-      }else{
-        plot(sx, sy, main = main, xlab = xlab, ylab = ylab, ylim = ylim, ...)
-      }
+qqnorm <- function(y, ylim, main = "Normal Q-Q Plot",
+                   xlab = "Theoretical Quantiles", ylab = "Sample Quantiles",
+                   plot.it = TRUE, datax = FALSE, ...)
+{
+  # Let's remove NA, and that is the default behavior here.
+  # Sorting removes NA
+  y <- base::sort(y, decreasing = TRUE)
+  if(0 == (n <- base::length(y)))
+    stop("y is empty or has only NAs")
+  if (plot.it && missing(ylim))
+    ylim <- range(y)
+  x <- rev(stats::qnorm(stats::ppoints(n)))
+  # Only difference from stats::qqplot
+  XYmat <- drop_dense(x,y)
+  # Make it faster by dropping excess points for plotting
+  sx <- XYmat[,1]
+  sy <- XYmat[,2]
+  if(plot.it){
+    if (datax){
+      plot(sy, sx, main = main, xlab = ylab, ylab = xlab, xlim = ylim, ...)
+    }else{
+      plot(sx, sy, main = main, xlab = xlab, ylab = ylab, ylim = ylim, ...)
     }
-    # Order is now inconsistent with stats::qqnorm
-    invisible(if(datax) list(x = y, y = x) else list(x = x, y = y))
   }
+  # Order is now inconsistent with stats::qqnorm
+  invisible(if(datax) list(x = y, y = x) else list(x = x, y = y))
+}

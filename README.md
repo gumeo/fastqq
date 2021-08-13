@@ -98,15 +98,15 @@ time_method <- function(pkg_name, method){
 N_test <- c(1e3,1e4,1e5,1e6,1e8)
 time_method('fastqq','qq')
 #> [1] "Timing fastqq::qq with 1000 points"
-#> 0.023 sec elapsed
-#> [1] "Timing fastqq::qq with 10000 points"
 #> 0.024 sec elapsed
+#> [1] "Timing fastqq::qq with 10000 points"
+#> 0.025 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+05 points"
 #> 0.025 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+06 points"
-#> 0.126 sec elapsed
+#> 0.124 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+08 points"
-#> 9.795 sec elapsed
+#> 9.791 sec elapsed
 N_test <- c(1e3,1e4,1e5,1e6)
 time_method('qqman','qq')
 #> [1] "Timing qqman::qq with 1000 points"
@@ -116,13 +116,13 @@ time_method('qqman','qq')
 #> [1] "Timing qqman::qq with 1e+05 points"
 #> 0.237 sec elapsed
 #> [1] "Timing qqman::qq with 1e+06 points"
-#> 2.439 sec elapsed
+#> 2.441 sec elapsed
 ```
 
 So we can expect around *25X speedup* for a million points. For 100
 million points (order of magnitude for modern GWAS), `fastqq::qq` takes
 10 seconds on the same hardware as for the timings above, `qqman::qq`
-takes more than 13.78 (*80X speedup*) minutes for 100 million points and
+takes more than 13.78 minutes for 100 million points (*80X speedup*) and
 if one saves to a vector graphic output, all the data is stored, and the
 file size scales with the amount of points.
 

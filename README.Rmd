@@ -103,7 +103,7 @@ N_test <- c(1e3,1e4,1e5,1e6)
 time_method('qqman','qq')
 ```
 
-So we can expect around *25X speedup* for a million points. For 100 million points (order of magnitude for modern GWAS), `fastqq::qq` takes 10 seconds on the same hardware as for the timings above, `qqman::qq` takes more than 13.78 (*80X speedup*) minutes for 100 million points and if one saves to a vector graphic output, all the data is stored, and the file size scales with the amount of points.
+So we can expect around *25X speedup* for a million points. For 100 million points (order of magnitude for modern GWAS), `fastqq::qq` takes 10 seconds on the same hardware as for the timings above, `qqman::qq` takes more than 13.78 minutes for 100 million points (*80X speedup*) and if one saves to a vector graphic output, all the data is stored, and the file size scales with the amount of points.
 
 ### `qqnorm` example
 
