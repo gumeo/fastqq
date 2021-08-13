@@ -1,8 +1,4 @@
 #include <Rcpp.h>
-#include <vector>
-#include <algorithm>
-#include <iostream>
-#include <math.h>
 using namespace Rcpp;
 
 struct greater
@@ -29,8 +25,12 @@ DataFrame drop_dense_internal(NumericVector sorted_sample,
   double distThreshold = std::min(x_width, y_width)/((double)(N_hard));
 
   // Start with the first and last
-  std::vector<double> final_x = {x[0],x[len-1]};
-  std::vector<double> final_y = {y[0],y[len-1]};
+  std::vector<double> final_x;
+  final_x.push_back(x[0]);
+  final_x.push_back(x[len-1]);
+  std::vector<double> final_y;
+  final_y.push_back(y[0]);
+  final_y.push_back(y[len-1]);
 
   double d = (x[0] - x[1]) + (y[0] - y[1]);
   for(size_t i = 1; i < len-1; i++){
@@ -96,8 +96,12 @@ DataFrame drop_dense_qq(NumericVector sample, int N_hard) {
   double distThreshold = std::min(x_width, y_width)/((double)(N_hard));
 
   // Start with the first and last
-  std::vector<double> final_x = {x[0],x[len-1]};
-  std::vector<double> final_y = {y[0],y[len-1]};
+  std::vector<double> final_x;
+  final_x.push_back(x[0]);
+  final_x.push_back(x[len-1]);
+  std::vector<double> final_y;
+  final_y.push_back(y[0]);
+  final_y.push_back(y[len-1]);
 
   double d = (x[0] - x[1]) + (y[0] - y[1]);
   for(size_t i = 1; i < len-1; i++){
