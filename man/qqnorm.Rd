@@ -41,7 +41,7 @@ Faster alternative to \code{stats::qqnorm()}. For more than 1e5 points
 we remove excess points, that would not be visible in the plot, since the
 points are so close. Otherwise this should work exactly the same, and the
 code is mostly adapted from \code{stats::qqnorm()}. This code produces
-more lightweight plots for excessive ammounts of data.
+more lightweight plots for excessive amounts of data.
 }
 \examples{
 \dontrun{

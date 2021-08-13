@@ -12,7 +12,7 @@ drop_dense(x, y, N_hard = 10000)
 
 \item{y}{A numeric vector of theoretical/sample points.}
 
-\item{N_hard}{Desired upperbound on number of points to plot.}
+\item{N_hard}{Desired upper bound on the number of points to plot.}
 }
 \value{
 data.frame with o and e pruned as columns.

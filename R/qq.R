@@ -139,7 +139,7 @@ qqplot <- function(x, y, plot.it = TRUE,
 #'
 #' @param x A numeric vector of sample/theoretical points.
 #' @param y A numeric vector of theoretical/sample points.
-#' @param N_hard Desired upperbound on number of points to plot.
+#' @param N_hard Desired upper bound on the number of points to plot.
 #' @return data.frame with o and e pruned as columns.
 #' @export
 drop_dense <- function(x, y, N_hard = 1e4){
@@ -157,7 +157,7 @@ drop_dense <- function(x, y, N_hard = 1e4){
 #' we remove excess points, that would not be visible in the plot, since the
 #' points are so close. Otherwise this should work exactly the same, and the
 #' code is mostly adapted from \code{stats::qqnorm()}. This code produces
-#' more lightweight plots for excessive ammounts of data.
+#' more lightweight plots for excessive amounts of data.
 #'
 #' @param y sample, to compare to normal quantiles.
 #' @param ylim graphical limits.
