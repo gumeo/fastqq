@@ -19,10 +19,17 @@ knitr::opts_chunk$set(
 <!-- badges: end -->
 
 `fastqq` is intended for creating quantile-quantile plots.
-Initially intended for large-scale genome-wide association studies (GWAS). 
-This is to investigate whether we have associations
-that could be stronger than what one would expect by pure randomness.
-In these cases, the user often plots tens to hundreds of millions of points.
+We provide faster alternatives to `qqman::qq`, `stats::qqplot` and 
+`stats::qqnorm`. We also provide the function `fastqq::drop_dense` such that
+the user can extract the data to plot with `ggplot`.
+
+For 100 million samples, **we achieve 80X speedup** compared to `qqman::qq`. 
+This takes the running time **from ~13.5 minutes down to less than 10 seconds.**
+
+This package was originally intended to speedup the creation of QQ plots for 
+genome wide association studies (GWAS). Then I decided to make it a general
+tool fro QQ style plots.
+For QQ plots, the user often plots tens to hundreds of millions of points.
 Creating scatter plots with so many points is usually not efficient since the 
 graphics devices store all the data, such that the visualization can be 
 rescaled or plotted in a vector graphics format (where again all the data is stored).
@@ -33,11 +40,7 @@ plot. QQ style plots are usually a monotonically increasing sequence of points,
 so we can easily employ fast filtering to remove redundant points, that would
 otherwise not be visible in the final plot anyways.
 
-We provide faster alternatives to `qqman::qq`, `stats::qqplot` and 
-`stats::qqnorm`. We also provide the function `fastqq::drop_dense` such that
-the user can extract the data to plot with `ggplot`.
-
-See examples below on how this can be achieved.
+**See examples below.**
 
 **Note** that this package is inspired by the `qqman` package, which has now
 [been archived](https://github.com/stephenturner/qqman). The interface to the 

@@ -1,6 +1,6 @@
 ## Test environments
-* ubuntu 20.04, R 4.1.1
-* local OS X install, R 4.1.1
+* local ubuntu 20.04, R 4.1.1
+* local OS X 11.2.3 install, R 3.6.2
 
 ## R CMD check results
 There were no ERRORs or WARNINGs. 
