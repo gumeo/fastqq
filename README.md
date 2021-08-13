@@ -15,6 +15,8 @@ For 100 million samples, **we achieve 80X speedup** compared to
 `qqman::qq`. This takes the running time **from \~13.5 minutes down to
 less than 10 seconds.**
 
+## Background
+
 This package was originally intended to speedup the creation of QQ plots
 for genome wide association studies (GWAS). Then I decided to make it a
 general tool fro QQ style plots. For QQ plots, the user often plots tens
@@ -101,15 +103,15 @@ time_method <- function(pkg_name, method){
 N_test <- c(1e3,1e4,1e5,1e6,1e8)
 time_method('fastqq','qq')
 #> [1] "Timing fastqq::qq with 1000 points"
-#> 0.027 sec elapsed
+#> 0.024 sec elapsed
 #> [1] "Timing fastqq::qq with 10000 points"
-#> 0.028 sec elapsed
+#> 0.025 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+05 points"
-#> 0.028 sec elapsed
+#> 0.025 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+06 points"
-#> 0.139 sec elapsed
+#> 0.128 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+08 points"
-#> 9.885 sec elapsed
+#> 9.834 sec elapsed
 N_test <- c(1e3,1e4,1e5,1e6)
 time_method('qqman','qq')
 #> [1] "Timing qqman::qq with 1000 points"
@@ -117,9 +119,9 @@ time_method('qqman','qq')
 #> [1] "Timing qqman::qq with 10000 points"
 #> 0.025 sec elapsed
 #> [1] "Timing qqman::qq with 1e+05 points"
-#> 0.24 sec elapsed
+#> 0.241 sec elapsed
 #> [1] "Timing qqman::qq with 1e+06 points"
-#> 2.469 sec elapsed
+#> 2.486 sec elapsed
 ```
 
 So we can expect around *25X speedup* for a million points. For 100

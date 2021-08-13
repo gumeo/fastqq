@@ -26,6 +26,8 @@ the user can extract the data to plot with `ggplot`.
 For 100 million samples, **we achieve 80X speedup** compared to `qqman::qq`. 
 This takes the running time **from ~13.5 minutes down to less than 10 seconds.**
 
+## Background
+
 This package was originally intended to speedup the creation of QQ plots for 
 genome wide association studies (GWAS). Then I decided to make it a general
 tool fro QQ style plots.
