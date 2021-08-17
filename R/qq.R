@@ -48,8 +48,10 @@ clean_pvector <- function(pvector){
 #'
 #' @import graphics
 #'
+#' @return No return value, called for plotting side effects.
+#'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' qq(stats::runif(1e6))
 #' }
 #' @export
@@ -99,12 +101,14 @@ qq <- function(pvector, ...) {
 #' @param plot.it Should the plot be created.
 #' @param ... Other arguments passed to \code{plot()}
 #'
+#' @return list with sorted samples, interpolated to be same size.
+#'
 #' @keywords visualization qq qqplot
 #'
 #' @import graphics
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' qqplot(stats::runif(1e6),stats::runif(1e6))
 #' }
 #' @export
@@ -176,7 +180,7 @@ drop_dense <- function(x, y, N_hard = 1e4){
 #' @import graphics
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' qqnorm(stats::rnorm(1e6))
 #' }
 #' @export

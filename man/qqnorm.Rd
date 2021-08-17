@@ -44,7 +44,7 @@ code is mostly adapted from \code{stats::qqnorm()}. This code produces
 more lightweight plots for excessive amounts of data.
 }
 \examples{
-\dontrun{
+\donttest{
 qqnorm(stats::rnorm(1e6))
 }
 }

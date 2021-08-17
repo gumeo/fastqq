@@ -26,13 +26,16 @@ qqplot(
 
 \item{...}{Other arguments passed to \code{plot()}}
 }
+\value{
+list with sorted samples, interpolated to be same size.
+}
 \description{
 Faster alternative to \code{stats::qqplot()}. For more than 1e5 points
 we remove excess points, that would not be visible in the plot, since the
 points are so close.
 }
 \examples{
-\dontrun{
+\donttest{
 qqplot(stats::runif(1e6),stats::runif(1e6))
 }
 }

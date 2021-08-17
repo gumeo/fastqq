@@ -11,3 +11,7 @@ There was 1 NOTE:
 I have not submitted a package with this email address before. I have used
 gumeo140688@gmail.com for the package accSDA. So this is my first package with
 this contact information.
+
+## Fixed comments from Julia Haider from first submission
+* Replaced dontrun with donttest
+* Added value to Rd files where missing.

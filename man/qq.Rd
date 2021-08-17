@@ -11,6 +11,9 @@ qq(pvector, ...)
 
 \item{...}{Other arguments passed to \code{plot()}}
 }
+\value{
+No return value, called for plotting side effects.
+}
 \description{
 Creates a quantile-quantile plot from p-values from an association study,
 e.g. a genome wide association study (GWAS). We compare
@@ -20,7 +23,7 @@ for speed. A graph with a hundred million points should only take a few
 seconds to generate.
 }
 \examples{
-\dontrun{
+\donttest{
 qq(stats::runif(1e6))
 }
 }
