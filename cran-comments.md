@@ -15,3 +15,6 @@ this contact information.
 ## Fixed comments from Julia Haider from first submission
 * Replaced dontrun with donttest
 * Added value to Rd files where missing.
+
+## Fixed comments from Julia Haider from second submission
+* Removed donttest and made sure that examples are below 5 seconds to run
