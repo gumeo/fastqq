@@ -35,9 +35,7 @@ we remove excess points, that would not be visible in the plot, since the
 points are so close.
 }
 \examples{
-\donttest{
 qqplot(stats::runif(1e6),stats::runif(1e6))
-}
 }
 \keyword{qq}
 \keyword{qqplot}

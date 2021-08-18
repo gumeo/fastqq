@@ -44,9 +44,7 @@ code is mostly adapted from \code{stats::qqnorm()}. This code produces
 more lightweight plots for excessive amounts of data.
 }
 \examples{
-\donttest{
 qqnorm(stats::rnorm(1e6))
-}
 }
 \keyword{qq}
 \keyword{qqplot}

@@ -23,9 +23,7 @@ for speed. A graph with a hundred million points should only take a few
 seconds to generate.
 }
 \examples{
-\donttest{
 qq(stats::runif(1e6))
-}
 }
 \keyword{qq}
 \keyword{qqplot}

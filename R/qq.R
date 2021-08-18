@@ -51,9 +51,7 @@ clean_pvector <- function(pvector){
 #' @return No return value, called for plotting side effects.
 #'
 #' @examples
-#' \donttest{
 #' qq(stats::runif(1e6))
-#' }
 #' @export
 qq <- function(pvector, ...) {
   # Hard coded limit, for when we switch to pruning
@@ -108,9 +106,7 @@ qq <- function(pvector, ...) {
 #' @import graphics
 #'
 #' @examples
-#' \donttest{
 #' qqplot(stats::runif(1e6),stats::runif(1e6))
-#' }
 #' @export
 qqplot <- function(x, y, plot.it = TRUE,
                    xlab = deparse1(substitute(x)),
@@ -180,9 +176,7 @@ drop_dense <- function(x, y, N_hard = 1e4){
 #' @import graphics
 #'
 #' @examples
-#' \donttest{
 #' qqnorm(stats::rnorm(1e6))
-#' }
 #' @export
 qqnorm <- function(y, ylim, main = "Normal Q-Q Plot",
                    xlab = "Theoretical Quantiles", ylab = "Sample Quantiles",
