@@ -16,6 +16,9 @@ knitr::opts_chunk$set(
 # fastqq
 
 <!-- badges: start -->
+[![CRAN](http://www.r-pkg.org/badges/version/fastqq)](https://cran.r-project.org/package=fastqq)
+[![Downloads](http://cranlogs.r-pkg.org/badges/fastqq?color=brightgreen)](http://www.r-pkg.org/pkg/fastqq)
+![alt tag](http://cranlogs.r-pkg.org/badges/grand-total/fastqq)
 <!-- badges: end -->
 
 `fastqq` is intended for creating quantile-quantile plots.
