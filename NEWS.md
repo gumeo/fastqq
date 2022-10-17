@@ -1,6 +1,6 @@
 # fastqq
 
-## fastqq 0.1.2
+## fastqq 0.1.3
 
 Second cran release
 
