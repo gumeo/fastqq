@@ -77,6 +77,7 @@ qqman::qq(p_simulated)
 <img src="man/figures/README-example-1.png" width="100%" />
 
 ``` r
+
 # Alternative
 fastqq::qq(p_simulated)
 ```
@@ -107,25 +108,25 @@ time_method <- function(pkg_name, method){
 N_test <- c(1e3,1e4,1e5,1e6,1e8)
 time_method('fastqq','qq')
 #> [1] "Timing fastqq::qq with 1000 points"
-#> 0.025 sec elapsed
+#> 0.021 sec elapsed
 #> [1] "Timing fastqq::qq with 10000 points"
-#> 0.025 sec elapsed
+#> 0.023 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+05 points"
 #> 0.024 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+06 points"
-#> 0.121 sec elapsed
+#> 0.103 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+08 points"
-#> 9.176 sec elapsed
+#> 11.245 sec elapsed
 N_test <- c(1e3,1e4,1e5,1e6)
 time_method('qqman','qq')
 #> [1] "Timing qqman::qq with 1000 points"
 #> 0.002 sec elapsed
 #> [1] "Timing qqman::qq with 10000 points"
-#> 0.024 sec elapsed
+#> 0.022 sec elapsed
 #> [1] "Timing qqman::qq with 1e+05 points"
-#> 0.237 sec elapsed
+#> 0.218 sec elapsed
 #> [1] "Timing qqman::qq with 1e+06 points"
-#> 2.449 sec elapsed
+#> 2.21 sec elapsed
 ```
 
 So we can expect around *25X speedup* for a million points. For 100

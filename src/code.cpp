@@ -61,10 +61,10 @@ DataFrame drop_dense_qq(NumericVector sample, int N_hard) {
   std::vector<double> x(sample.size());
   size_t k=0;
   for (size_t i = 0; i < x.size(); ++i) {
-    if (!NumericVector::is_na(sample[i]) &
-        !traits::is_nan<REALSXP>(sample[i]) &
-        !traits::is_infinite<REALSXP>(sample[i]) &
-        (sample[i] >= 0.0) & (sample[i] <= 1.0)) {
+    if (!NumericVector::is_na(sample[i]) &&
+        !traits::is_nan<REALSXP>(sample[i]) &&
+        !traits::is_infinite<REALSXP>(sample[i]) &&
+        (sample[i] >= 0.0) && (sample[i] <= 1.0)) {
       x[k] = -log10(sample[i]);
       k++;
     }
