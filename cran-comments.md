@@ -1,6 +1,6 @@
 ## Test environments
-* local ubuntu 20.04, R 4.1.1
-* local OS X 11.2.3 install, R 4.1.2
+* rhub with devtools::check_rhub
+* local OS X install, R 4.1.2
 * win builder with devtools::check_win_devel
 
 ## R CMD check results
