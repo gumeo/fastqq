@@ -1,5 +1,13 @@
 # fastqq
 
+## fastqq 0.1.2
+
+Second cran release
+
+- Removed bitwise or in C++ code because of warning.
+- Rebuilt readme.
+
+
 ## fastqq 0.1.0
 
 This is the first version released on github. The following is implemented:
