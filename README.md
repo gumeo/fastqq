@@ -5,9 +5,9 @@
 
 <!-- badges: start -->
 
-[![CRAN](http://www.r-pkg.org/badges/version/fastqq)](https://cran.r-project.org/package=fastqq)
-[![Downloads](http://cranlogs.r-pkg.org/badges/fastqq?color=brightgreen)](http://www.r-pkg.org/pkg/fastqq)
-![alt tag](http://cranlogs.r-pkg.org/badges/grand-total/fastqq)
+[![CRAN](https://www.r-pkg.org/badges/version/fastqq)](https://cran.r-project.org/package=fastqq)
+[![Downloads](https://cranlogs.r-pkg.org/badges/fastqq?color=brightgreen)](https://www.r-pkg.org/pkg/fastqq)
+![alt tag](https://cranlogs.r-pkg.org/badges/grand-total/fastqq)
 <!-- badges: end -->
 
 `fastqq` is intended for creating quantile-quantile plots. We provide
@@ -108,25 +108,25 @@ time_method <- function(pkg_name, method){
 N_test <- c(1e3,1e4,1e5,1e6,1e8)
 time_method('fastqq','qq')
 #> [1] "Timing fastqq::qq with 1000 points"
-#> 0.021 sec elapsed
+#> 0.02 sec elapsed
 #> [1] "Timing fastqq::qq with 10000 points"
-#> 0.023 sec elapsed
+#> 0.022 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+05 points"
 #> 0.024 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+06 points"
-#> 0.103 sec elapsed
+#> 0.101 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+08 points"
-#> 11.245 sec elapsed
+#> 10.999 sec elapsed
 N_test <- c(1e3,1e4,1e5,1e6)
 time_method('qqman','qq')
 #> [1] "Timing qqman::qq with 1000 points"
-#> 0.002 sec elapsed
+#> 0.003 sec elapsed
 #> [1] "Timing qqman::qq with 10000 points"
-#> 0.022 sec elapsed
+#> 0.023 sec elapsed
 #> [1] "Timing qqman::qq with 1e+05 points"
 #> 0.218 sec elapsed
 #> [1] "Timing qqman::qq with 1e+06 points"
-#> 2.21 sec elapsed
+#> 2.196 sec elapsed
 ```
 
 So we can expect around *25X speedup* for a million points. For 100

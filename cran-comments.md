@@ -12,3 +12,6 @@ clang
 
 I have replaced the bitwise or (which was ok here, so everything should
 work the same).
+
+I have also replaces old http links with https in the readme, (comment from
+last submission).
