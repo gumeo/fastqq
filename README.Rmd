@@ -86,6 +86,14 @@ fastqq::qq(p_simulated)
 
 There is no visible difference, and the analysis can proceed as usual.
 
+If some p-values are exactly zero (e.g. from software that reports underflowed
+results), use the `zero_action` parameter to substitute a small finite value:
+
+```{r zero_action_ex}
+pvec_with_zeros <- c(runif(1e4), 0, 0)
+qq(pvec_with_zeros, zero_action = 1e-300)
+```
+
 We can compare the timings of creating the plots, with `qqman`.
 
 ```{r timing_fastqq}
@@ -112,6 +120,60 @@ time_method('qqman','qq')
 ```
 
 So we can expect around *25X speedup* for a million points. For 100 million points (order of magnitude for modern GWAS), `fastqq::qq` takes 10 seconds on the same hardware as for the timings above, `qqman::qq` takes more than 13.78 minutes for 100 million points (*80X speedup*) and if one saves to a vector graphic output, all the data is stored, and the file size scales with the amount of points.
+
+### `qqlog` example
+
+`qqlog` accepts pre-computed −log₁₀(p-values). This is useful when you have
+already transformed your p-values, or need full precision before plotting (e.g.
+values below `.Machine$double.xmin` computed in extended precision):
+
+```{r qqlog_ex}
+set.seed(42)
+suppressPackageStartupMessages(library(fastqq))
+pvec <- runif(1e5)
+fastqq::qqlog(-log10(pvec))
+```
+
+### `qqchisq1` example
+
+`qqchisq1` accepts χ² test statistics and converts them to −log₁₀(p) assuming
+1 degree of freedom. The conversion uses log-space arithmetic for numerical
+stability even for very large statistics:
+
+```{r qqchisq1_ex}
+set.seed(42)
+suppressPackageStartupMessages(library(fastqq))
+chisq_vals <- rchisq(1e5, df = 1)
+fastqq::qqchisq1(chisq_vals)
+```
+
+#### Handling astronomically small p-values
+
+A χ² value of ~2303 (df=1) corresponds to p ≈ 10⁻⁵⁰⁰, which is far below
+R's double-precision floor of `.Machine$double.xmin` ≈ 2.2×10⁻³⁰⁸. Naive
+computation underflows to zero, making the point invisible to any method that
+works on the raw p-value scale:
+
+```{r qqchisq1_extreme}
+suppressPackageStartupMessages(library(fastqq))
+
+extreme_chisq <- 2303  # p ≈ 10^-500
+
+# Naive approach: p-value underflows to 0, point is lost
+cat("Naive p-value:          ", pchisq(extreme_chisq, 1, lower.tail = FALSE), "\n")
+
+# Log-space gives the correct -log10(p) even for such extreme values
+cat("-log10(p) via log-space:",
+    -pchisq(extreme_chisq, 1, lower.tail = FALSE, log.p = TRUE) / log(10), "\n")
+
+# qqchisq1 uses log-space internally, so the extreme point appears correctly
+set.seed(42)
+chisq_vals <- c(rchisq(1e4, df = 1), extreme_chisq)
+fastqq::qqchisq1(chisq_vals)
+```
+
+The extreme point appears at the top of the plot (~500 on the y-axis) without
+any special handling required from the user.
 
 ### `qqnorm` example
 

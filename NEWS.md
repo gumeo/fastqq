@@ -1,5 +1,17 @@
 # fastqq
 
+## fastqq 0.1.4
+
+- Added `zero_action` parameter to `qq()`: replaces p-values of exactly zero
+  with a user-supplied finite substitute (e.g. `1e-300`) and emits a warning
+  stating how many values were replaced.
+- New function `qqlog()`: accepts pre-computed −log₁₀(p-values) directly.
+  Same signature and performance characteristics as `qq()`.
+- New function `qqchisq1()`: accepts χ² test statistics (df = 1) and converts
+  them to −log₁₀(p) using log-space `pchisq()` for numerical precision beyond
+  `.Machine$double.xmin`.
+- Added unit tests (testthat) covering the new functions.
+
 ## fastqq 0.1.3
 
 Second cran release

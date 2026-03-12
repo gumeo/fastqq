@@ -16,7 +16,7 @@ We also provide the function `fastqq::drop_dense` such that the user can
 extract the data to plot with `ggplot`.
 
 For 100 million samples, **we achieve 80X speedup** compared to
-`qqman::qq`. This takes the running time **from \~13.5 minutes down to
+`qqman::qq`. This takes the running time **from ~13.5 minutes down to
 less than 10 seconds.**
 
 ## Background
@@ -86,6 +86,19 @@ fastqq::qq(p_simulated)
 
 There is no visible difference, and the analysis can proceed as usual.
 
+If some p-values are exactly zero (e.g. from software that reports
+underflowed results), use the `zero_action` parameter to substitute a
+small finite value:
+
+``` r
+pvec_with_zeros <- c(runif(1e4), 0, 0)
+qq(pvec_with_zeros, zero_action = 1e-300)
+#> Warning in qq(pvec_with_zeros, zero_action = 1e-300): 2 p-value(s) equal to
+#> zero replaced with 1e-300.
+```
+
+<img src="man/figures/README-zero_action_ex-1.png" width="100%" />
+
 We can compare the timings of creating the plots, with `qqman`.
 
 ``` r
@@ -108,25 +121,25 @@ time_method <- function(pkg_name, method){
 N_test <- c(1e3,1e4,1e5,1e6,1e8)
 time_method('fastqq','qq')
 #> [1] "Timing fastqq::qq with 1000 points"
-#> 0.02 sec elapsed
+#> 0.029 sec elapsed
 #> [1] "Timing fastqq::qq with 10000 points"
-#> 0.022 sec elapsed
+#> 0.02 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+05 points"
-#> 0.024 sec elapsed
+#> 0.049 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+06 points"
-#> 0.101 sec elapsed
+#> 0.417 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+08 points"
-#> 10.999 sec elapsed
+#> 48.709 sec elapsed
 N_test <- c(1e3,1e4,1e5,1e6)
 time_method('qqman','qq')
 #> [1] "Timing qqman::qq with 1000 points"
 #> 0.003 sec elapsed
 #> [1] "Timing qqman::qq with 10000 points"
-#> 0.023 sec elapsed
+#> 0.019 sec elapsed
 #> [1] "Timing qqman::qq with 1e+05 points"
-#> 0.218 sec elapsed
+#> 0.187 sec elapsed
 #> [1] "Timing qqman::qq with 1e+06 points"
-#> 2.196 sec elapsed
+#> 1.973 sec elapsed
 ```
 
 So we can expect around *25X speedup* for a million points. For 100
@@ -135,6 +148,69 @@ million points (order of magnitude for modern GWAS), `fastqq::qq` takes
 takes more than 13.78 minutes for 100 million points (*80X speedup*) and
 if one saves to a vector graphic output, all the data is stored, and the
 file size scales with the amount of points.
+
+### `qqlog` example
+
+`qqlog` accepts pre-computed −log₁₀(p-values). This is useful when you
+have already transformed your p-values, or need full precision before
+plotting (e.g. values below `.Machine$double.xmin` computed in extended
+precision):
+
+``` r
+set.seed(42)
+suppressPackageStartupMessages(library(fastqq))
+pvec <- runif(1e5)
+fastqq::qqlog(-log10(pvec))
+```
+
+<img src="man/figures/README-qqlog_ex-1.png" width="100%" />
+
+### `qqchisq1` example
+
+`qqchisq1` accepts χ² test statistics and converts them to −log₁₀(p)
+assuming 1 degree of freedom. The conversion uses log-space arithmetic
+for numerical stability even for very large statistics:
+
+``` r
+set.seed(42)
+suppressPackageStartupMessages(library(fastqq))
+chisq_vals <- rchisq(1e5, df = 1)
+fastqq::qqchisq1(chisq_vals)
+```
+
+<img src="man/figures/README-qqchisq1_ex-1.png" width="100%" />
+
+#### Handling astronomically small p-values
+
+A χ² value of ~2303 (df=1) corresponds to p ≈ 10⁻⁵⁰⁰, which is far below
+R’s double-precision floor of `.Machine$double.xmin` ≈ 2.2×10⁻³⁰⁸. Naive
+computation underflows to zero, making the point invisible to any method
+that works on the raw p-value scale:
+
+``` r
+suppressPackageStartupMessages(library(fastqq))
+
+extreme_chisq <- 2303  # p ≈ 10^-500
+
+# Naive approach: p-value underflows to 0, point is lost
+cat("Naive p-value:          ", pchisq(extreme_chisq, 1, lower.tail = FALSE), "\n")
+#> Naive p-value:           0
+
+# Log-space gives the correct -log10(p) even for such extreme values
+cat("-log10(p) via log-space:",
+    -pchisq(extreme_chisq, 1, lower.tail = FALSE, log.p = TRUE) / log(10), "\n")
+#> -log10(p) via log-space: 501.8695
+
+# qqchisq1 uses log-space internally, so the extreme point appears correctly
+set.seed(42)
+chisq_vals <- c(rchisq(1e4, df = 1), extreme_chisq)
+fastqq::qqchisq1(chisq_vals)
+```
+
+<img src="man/figures/README-qqchisq1_extreme-1.png" width="100%" />
+
+The extreme point appears at the top of the plot (~500 on the y-axis)
+without any special handling required from the user.
 
 ### `qqnorm` example
 
@@ -180,25 +256,25 @@ After I created this, I have found several sources, that aim at
 something similar, usually also a **manhattan** plot (I am probably also
 missing other packages):
 
--   [`fastman`](https://github.com/roman-tremmel/ggfastman) package.
-    Uses `scattermore`, so the plotting is very fast. This package is
-    not currently (31/07/2021) on CRAN.
--   [`ramwas`](https://github.com/andreyshabalin/ramwas) package. Has
-    not been maintained in 2 years and is on bioconductor. This package
-    is aimed for **Fast Methylome-Wide Association Study Pipeline for
-    Enrichment Platforms** and the `ramwas::qqPlotFast` function is just
-    a minor part of the package. It
+- [`fastman`](https://github.com/roman-tremmel/ggfastman) package. Uses
+  `scattermore`, so the plotting is very fast. This package is not
+  currently (31/07/2021) on CRAN.
+- [`ramwas`](https://github.com/andreyshabalin/ramwas) package. Has not
+  been maintained in 2 years and is on bioconductor. This package is
+  aimed for **Fast Methylome-Wide Association Study Pipeline for
+  Enrichment Platforms** and the `ramwas::qqPlotFast` function is just a
+  minor part of the package. It
 
 Here are also some projects on CRAN, where the plotting is similar to
 `qqman::qq`, and is not improved for speed.
 
--   [`gwaRs`](https://github.com/LindoNkambule/gwaRs) package. Focuses
-    on using `ggplot`.
--   [`manhplot`](https://github.com/cgrace1978/manhplot) package. This
-    is a pretty ambitious project, with a good
-    [publication](https://bmcbioinformatics.biomedcentral.com/track/pdf/10.1186/s12859-019-3201-y.pdf).
-    Again, the main focus is on the manhattan plot.
--   [`qqman`](https://github.com/stephenturner/qqman) package. Probably
-    one of the main inspiration for most of the other packages.
--   [`CMplot`](https://github.com/YinLiLin/CMplot) package. Great
-    circular manhattan plot.
+- [`gwaRs`](https://github.com/LindoNkambule/gwaRs) package. Focuses on
+  using `ggplot`.
+- [`manhplot`](https://github.com/cgrace1978/manhplot) package. This is
+  a pretty ambitious project, with a good
+  [publication](https://bmcbioinformatics.biomedcentral.com/track/pdf/10.1186/s12859-019-3201-y.pdf).
+  Again, the main focus is on the manhattan plot.
+- [`qqman`](https://github.com/stephenturner/qqman) package. Probably
+  one of the main inspiration for most of the other packages.
+- [`CMplot`](https://github.com/YinLiLin/CMplot) package. Great circular
+  manhattan plot.

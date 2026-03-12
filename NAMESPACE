@@ -2,6 +2,8 @@
 
 export(drop_dense)
 export(qq)
+export(qqchisq1)
+export(qqlog)
 export(qqnorm)
 export(qqplot)
 import(graphics)

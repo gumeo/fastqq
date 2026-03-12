@@ -11,3 +11,13 @@ drop_dense_qq <- function(sample, N_hard) {
     .Call('_fastqq_drop_dense_qq', PACKAGE = 'fastqq', sample, N_hard)
 }
 
+#' @noRd
+drop_dense_qqlog <- function(log10_pvals, N_hard) {
+    .Call('_fastqq_drop_dense_qqlog', PACKAGE = 'fastqq', log10_pvals, N_hard)
+}
+
+#' @noRd
+drop_dense_chisq1 <- function(chisq_vals, N_hard) {
+    .Call('_fastqq_drop_dense_chisq1', PACKAGE = 'fastqq', chisq_vals, N_hard)
+}
+

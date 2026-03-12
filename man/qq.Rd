@@ -4,10 +4,16 @@
 \alias{qq}
 \title{Creates a Q-Q plot}
 \usage{
-qq(pvector, ...)
+qq(pvector, zero_action = NULL, ...)
 }
 \arguments{
 \item{pvector}{A numeric vector of p-values.}
+
+\item{zero_action}{A numeric value to substitute for p-values of exactly
+zero before plotting. If \code{NULL} (default), zero p-values are treated
+like any other invalid value and silently excluded. If a numeric value is
+provided (e.g. \code{1e-300}), all zero p-values are replaced with that
+value and a warning is emitted stating how many were replaced.}
 
 \item{...}{Other arguments passed to \code{plot()}}
 }
@@ -24,6 +30,10 @@ seconds to generate.
 }
 \examples{
 qq(stats::runif(1e6))
+
+# Handle p-values of zero by substituting a small finite value
+pvec <- c(stats::runif(1e4), 0, 0)
+qq(pvec, zero_action = 1e-300)
 }
 \keyword{qq}
 \keyword{qqplot}

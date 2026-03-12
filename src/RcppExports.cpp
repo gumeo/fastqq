@@ -35,10 +35,36 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// drop_dense_qqlog
+DataFrame drop_dense_qqlog(NumericVector log10_pvals, int N_hard);
+RcppExport SEXP _fastqq_drop_dense_qqlog(SEXP log10_pvalsSEXP, SEXP N_hardSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type log10_pvals(log10_pvalsSEXP);
+    Rcpp::traits::input_parameter< int >::type N_hard(N_hardSEXP);
+    rcpp_result_gen = Rcpp::wrap(drop_dense_qqlog(log10_pvals, N_hard));
+    return rcpp_result_gen;
+END_RCPP
+}
+// drop_dense_chisq1
+DataFrame drop_dense_chisq1(NumericVector chisq_vals, int N_hard);
+RcppExport SEXP _fastqq_drop_dense_chisq1(SEXP chisq_valsSEXP, SEXP N_hardSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type chisq_vals(chisq_valsSEXP);
+    Rcpp::traits::input_parameter< int >::type N_hard(N_hardSEXP);
+    rcpp_result_gen = Rcpp::wrap(drop_dense_chisq1(chisq_vals, N_hard));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_fastqq_drop_dense_internal", (DL_FUNC) &_fastqq_drop_dense_internal, 3},
     {"_fastqq_drop_dense_qq", (DL_FUNC) &_fastqq_drop_dense_qq, 2},
+    {"_fastqq_drop_dense_qqlog", (DL_FUNC) &_fastqq_drop_dense_qqlog, 2},
+    {"_fastqq_drop_dense_chisq1", (DL_FUNC) &_fastqq_drop_dense_chisq1, 2},
     {NULL, NULL, 0}
 };
 
