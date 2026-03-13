@@ -121,25 +121,25 @@ time_method <- function(pkg_name, method){
 N_test <- c(1e3,1e4,1e5,1e6,1e8)
 time_method('fastqq','qq')
 #> [1] "Timing fastqq::qq with 1000 points"
-#> 0.029 sec elapsed
+#> 0.028 sec elapsed
 #> [1] "Timing fastqq::qq with 10000 points"
 #> 0.02 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+05 points"
 #> 0.049 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+06 points"
-#> 0.417 sec elapsed
+#> 0.414 sec elapsed
 #> [1] "Timing fastqq::qq with 1e+08 points"
-#> 48.709 sec elapsed
+#> 48.603 sec elapsed
 N_test <- c(1e3,1e4,1e5,1e6)
 time_method('qqman','qq')
 #> [1] "Timing qqman::qq with 1000 points"
-#> 0.003 sec elapsed
+#> 0.002 sec elapsed
 #> [1] "Timing qqman::qq with 10000 points"
-#> 0.019 sec elapsed
+#> 0.02 sec elapsed
 #> [1] "Timing qqman::qq with 1e+05 points"
-#> 0.187 sec elapsed
+#> 0.189 sec elapsed
 #> [1] "Timing qqman::qq with 1e+06 points"
-#> 1.973 sec elapsed
+#> 1.989 sec elapsed
 ```
 
 So we can expect around *25X speedup* for a million points. For 100
@@ -272,8 +272,8 @@ Here are also some projects on CRAN, where the plotting is similar to
   using `ggplot`.
 - [`manhplot`](https://github.com/cgrace1978/manhplot) package. This is
   a pretty ambitious project, with a good
-  [publication](https://bmcbioinformatics.biomedcentral.com/track/pdf/10.1186/s12859-019-3201-y.pdf).
-  Again, the main focus is on the manhattan plot.
+  [publication](https://pubmed.ncbi.nlm.nih.gov/31775616/). Again, the
+  main focus is on the manhattan plot.
 - [`qqman`](https://github.com/stephenturner/qqman) package. Probably
   one of the main inspiration for most of the other packages.
 - [`CMplot`](https://github.com/YinLiLin/CMplot) package. Great circular

@@ -4,4 +4,7 @@
 * rhub
 
 ## R CMD check results
+
+1 NOTE fixed, invalid link in readme.
+
 There were no ERRORs or WARNINGs.

@@ -218,6 +218,6 @@ similar, usually also a **manhattan** plot (I am probably also missing other pac
 Here are also some projects on CRAN, where the plotting is similar to `qqman::qq`, and is not improved for speed.
 
 - [`gwaRs`](https://github.com/LindoNkambule/gwaRs) package. Focuses on using `ggplot`.
-- [`manhplot`](https://github.com/cgrace1978/manhplot) package. This is a pretty ambitious project, with a good [publication](https://bmcbioinformatics.biomedcentral.com/track/pdf/10.1186/s12859-019-3201-y.pdf). Again, the main focus is on the manhattan plot.
+- [`manhplot`](https://github.com/cgrace1978/manhplot) package. This is a pretty ambitious project, with a good [publication](https://pubmed.ncbi.nlm.nih.gov/31775616/). Again, the main focus is on the manhattan plot.
 - [`qqman`](https://github.com/stephenturner/qqman) package. Probably one of the main inspiration for most of the other packages.
 - [`CMplot`](https://github.com/YinLiLin/CMplot) package. Great circular manhattan plot.
