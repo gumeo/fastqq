@@ -1,5 +1,9 @@
 # fastqq
 
+## fastqq 0.1.5
+
+- Fixed issue in test on mac.
+
 ## fastqq 0.1.4
 
 - Added `zero_action` parameter to `qq()`: replaces p-values of exactly zero
