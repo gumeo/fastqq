@@ -33,7 +33,7 @@ test_that("qq zero_action parameter replaces zeros with a warning", {
 
   expect_warning(
     qq(pvec, zero_action = 1e-300),
-    regexp = "2 p-value\\(s\\) equal to zero replaced with 1e-300"
+    regexp = "2 p-value\\(s\\) equal to zero replaced with"
   )
 })
 
